@@ -46,7 +46,7 @@ class PlansController extends Controller
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        // $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
         $result = $this->repository->all();
 
         return response()->json([
@@ -119,24 +119,18 @@ class PlansController extends Controller
      */
     public function update(PlanUpdateRequest $request, $id)
     {
-        try {
+        $request = $this->service->update($request->all(), $id);
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $plan = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'Plan updated.',
-                'data'    => $plan->toArray(),
-            ];
-
-            return response()->json($response);
-        } catch (ValidatorException $e) {
-            return response()->json([
-                'error'   => true,
-                'message' => $e->getMessageBag()
-            ]);
+        if($request['success']){
+            $result = $request['data'];
         }
+
+        $result = null;
+
+        return response()->json([
+         'data' => $request,
+         ]);
+
     }
 
 
@@ -149,7 +143,7 @@ class PlansController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+        $deleted = $this->service->delete($id);
         return response()->json([
             'message' => 'Plan deleted.',
             'deleted' => $deleted,

@@ -22,25 +22,57 @@ class PlanService
         try
         {
             $this->validator->with($data)->passesOrFail(ValidatorInterface::RULE_CREATE);
-
             $result = $this->repository->create($data);
 
             return [
                 'success' => true,
-                'message' =>  "Transação com sucesso",
+                'message' =>  "Sucesso",
                 'data' => $result
             ];
 
         } catch (\Exception $e) {
             return [
                 'success' => false,
-                'message' =>  "Erro de execucao: ".$e->getMessageBag()
+                'error' =>  "Oops: ".$e->getMessageBag()
             ];
         }
     }
 
-    public function update(){}
-    public function delete(){}
+    public function update($data, $id)
+    {
+        try {
+            $this->validator->with($data)->passesOrFail(ValidatorInterface::RULE_UPDATE);
+            $result = $this->repository->update($data, $id);
+
+            return [
+                'success' => true,
+                'message' =>  "Sucesso",
+                'data' => $result
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' =>  "Oops: ".$e
+            ];
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $result = $this->repository->delete($id);
+            return [
+                'success' => true,
+                'message' =>  "Sucesso",
+                'data' => null
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' =>  "Oops: ".$e
+            ];
+        }
+    }
 
 
 
